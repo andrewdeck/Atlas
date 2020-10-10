@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<head>
+  <title>Minecraft Atlas Helper</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- CSS only -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+</head>
+<body>
+  <main id="app">
+    <table class="table table-dark table-bordered table-sm text-center">
+      <thead>
+        <tr>
+          <th scope="col" v-for="(row, y) in cells">{{y+1}}</th>
+        </tr>
+      </thead>
+      <tbody @mouseleave="setHover(-1,-1)">
+        <tr v-for="(row, y) in cells">
+          <td
+            @mouseover="setHover(x,y)"
+            :class="{
+              'map-cell': true,
+              'bg-success': selected.x=== x && selected.y === y,
+              'bg-primary': hover.x=== x && hover.y === y,
+              'bg-info': cell > 0 && !(hover.x=== x && hover.y === y) && !(selected.x=== x && selected.y === y)
+            }"
+            v-for="(cell, x) in row"
+            v-on:click="updateCell(x,y)"
+            v-on:keyup="handleArrows"
+            :title="(x+1) +', '+ (y+1)"
+          >
+            {{cell}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <form>
+      <label for="map-id">Next Map Id</label>
+      <input name="map-id" v-model="nextMapId">
+    </form>
+  </main>  
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
