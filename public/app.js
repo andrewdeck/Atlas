@@ -34,6 +34,7 @@ const app = new Vue({
     },
     handleArrows: function(event) {
       let {x,y} = this.selected;
+      if(!x || !y) return;
       if(event.keyCode === 37){ // LEFT
         if(x > 0) x--;
       } else if(event.keyCode === 38){ // UP
