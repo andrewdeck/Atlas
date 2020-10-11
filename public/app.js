@@ -14,6 +14,7 @@ const app = new Vue({
     hover: {},
     selected: {},
     nextMapId: 1,
+    completed: 0,
     cells: initialData    
   },
   methods: {
@@ -21,6 +22,7 @@ const app = new Vue({
       this.cells[y][x] = this.nextMapId;
       this.nextMapId++;
       this.selected = {x,y};
+      this.updateCompleted();
       fetch('/data', {
         method: 'PUT',
         body: JSON.stringify(this.cells),
@@ -34,7 +36,7 @@ const app = new Vue({
     },
     handleArrows: function(event) {
       let {x,y} = this.selected;
-      if(!x || !y) return;
+      if(x === undefined || y === undefined) return;
       if(event.keyCode === 37){ // LEFT
         if(x > 0) x--;
       } else if(event.keyCode === 38){ // UP
@@ -48,6 +50,11 @@ const app = new Vue({
         this.selected = {x,y};
         this.updateCell(x,y);
       }
+    },
+    updateCompleted: function() {
+      const total = this.cells.map( row => row.length ).reduce( (a, b) => a + b, 0);
+      const completed = this.cells.flat().reduce( (c, t) => c > 0 ? t++ : t, 0);
+      this.completed = completed * 100/total;
     }
   },
   mounted() {
@@ -57,6 +64,7 @@ const app = new Vue({
     }).then( result => {
       this.cells = result;
       this.nextMapId = (Math.max(...result.map( x => Math.max(...x)))) + 1;
+      this.updateCompleted();
     })
     this._keyListener = function(e) {
       if(e.keyCode >= 37 && e.keyCode <= 40) {
